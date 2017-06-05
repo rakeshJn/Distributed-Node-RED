@@ -1,3 +1,18 @@
+/**
+ * Copyright JS Foundation and other contributors, http://js.foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
 
 module.exports = function(RED) {
     "use strict";
@@ -92,14 +107,15 @@ module.exports = function(RED) {
         this.count = Number(n.count || 0);
         this.joiner = (n.joiner||"").replace(/\\n/g,"\n").replace(/\\r/g,"\r").replace(/\\t/g,"\t").replace(/\\e/g,"\e").replace(/\\f/g,"\f").replace(/\\0/g,"\0");
         this.build = n.build || "array";
-        this.topic = n.topic;
+        this.accumulate = n.accumulate || "false";
+        //this.topic = n.topic;
         var node = this;
         var inflight = {};
 
         var completeSend = function(partId) {
             var group = inflight[partId];
             clearTimeout(group.timeout);
-            if ((node.build !== "accum" && node.build !== "accus") || group.msg.hasOwnProperty("complete")) { delete inflight[partId]; }
+            if ((node.accumulate !== true) || group.msg.hasOwnProperty("complete")) { delete inflight[partId]; }
             if (group.type === 'string') {
                 RED.util.setMessageProperty(group.msg,node.property,group.payload.join(group.joinChar));
             } else {
@@ -157,11 +173,11 @@ module.exports = function(RED) {
                     if (targetCount === 0 && msg.hasOwnProperty('parts')) {
                         targetCount = msg.parts.count || 0;
                     }
-                    if ((node.build === 'object') || (node.build === 'accus')) {
+                    if (node.build === 'object') {
                         propertyKey = RED.util.getMessageProperty(msg,node.key);
                     }
                 }
-                if (((payloadType === 'object') || (payloadType === 'accus')) && (propertyKey === null || propertyKey === undefined || propertyKey === "")) {
+                if ((payloadType === 'object') && (propertyKey === null || propertyKey === undefined || propertyKey === "")) {
                     if (node.mode === "auto") {
                         node.warn("Message missing 'msg.parts.key' property - cannot add to object");
                     } else {
@@ -179,7 +195,7 @@ module.exports = function(RED) {
                             msg:msg
                         };
                     }
-                    else if (payloadType === 'accum' || payloadType === 'accus') {
+                    else if (node.accumulate === true) {
                         if (msg.hasOwnProperty("reset")) { delete inflight[partId]; }
                         inflight[partId] = inflight[partId] || {
                             currentCount:0,
@@ -210,12 +226,12 @@ module.exports = function(RED) {
                 }
 
                 var group = inflight[partId];
-                if ((payloadType === 'object') || (payloadType === 'accus')) {
+                if (payloadType === 'object') {
                     group.payload[propertyKey] = property;
                     group.currentCount = Object.keys(group.payload).length;
-                    msg.topic = node.topic || msg.topic;
+                    //msg.topic = node.topic || msg.topic;
                 }
-                else if ((payloadType === 'merged') || (payloadType === 'accum')) {
+                else if (payloadType === 'merged') {
                     if (Array.isArray(property) || typeof property !== 'object') {
                         if (!msg.hasOwnProperty("complete")) {
                             node.warn("Cannot merge non-object types");

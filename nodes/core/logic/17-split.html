@@ -1,3 +1,18 @@
+<!--
+  Copyright JS Foundation and other contributors, http://js.foundation
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 
 <script type="text/x-red" data-template-name="split">
     <div class="form-row">
@@ -73,19 +88,12 @@
                 <option value="array">an Array</option>
                 <option value="object">a key/value Object</option>
                 <option value="merged">a merged Object</option>
-                <option value="accus">an accumlated key/value Object</option>
-                <option value="accum">an accumlated Object</option>
             </select>
         </div>
         <div class="form-row node-row-key">
             <label style="vertical-align:top; margin-top:7px;">using</label>
             <div style="display:inline-block">
-                <input type="text" id="node-input-key" style="width:300px;">
-                <div style="line-height:32px;">
-                    as the property key, and set the overall<br/>
-                    <code>msg.<span id="node-newtopic">topic</span></code>
-                    to <input type="text" id="node-input-topic" style="width:55%">
-                </div>
+                <input type="text" id="node-input-key" style="width:252px;"> as the key
             </div>
         </div>
         <div class="form-row node-row-joiner">
@@ -95,13 +103,16 @@
         <div class="form-row node-row-trigger" id="trigger-row">
             <label style="width:auto;">Send the message:</label>
             <ul>
-                <li style="height:40px;">
-                    <label style="width:280px;" for="node-input-count">After a number of message parts:</label> <input id="node-input-count" placeholder="count" type="text" style="width: 75px;">
+                <li>
+                    <label style="width:280px;" for="node-input-count">After a number of message parts</label> <input id="node-input-count" placeholder="count" type="text" style="width:75px;">
                 </li>
-                <li style="height:40px;">
-                    <label style="width:280px;" for="node-input-timeout">After a timeout following the first message:</label> <input id="node-input-timeout" placeholder="seconds" type="text" style="width: 75px;">
+                <li style="list-style-type:none;">
+                    <input type="checkbox" id="node-input-accumulate" style="display:inline-block; width:20px; list-style-type:none; margin-left:20px; vertical-align:top;">  and every subsequent message.
                 </li>
-                <li style="height:40px;">
+                <li>
+                    <label style="width:280px;" for="node-input-timeout">After a timeout following the first message</label> <input id="node-input-timeout" placeholder="seconds" type="text" style="width:75px;">
+                </li>
+                <li>
                     <label style="width:auto; padding-top:6px;">After a message with the <code>msg.complete</code> property set</label>
                 </li>
             </ul>
@@ -129,12 +140,6 @@
         <li>a <b>key/value object</b> - created by using a property of each message to determine the key under which
         the required value is stored.</li>
         <li>a <b>merged object</b> - created by merging the property of each message under a single object.</li>
-        <li>an <b>accumulated object</b> - created by merging payload objects into a single object
-        continuously. Outputs every message once the required number has been reached. <code>msg.complete</code> will
-        send the msg and then clear the accumlation.</li>
-        <li>an <b>accumulated key/value object</b> - created by merging payloads of each message under a single object
-        using the specified property as a key. Outputs every message once the required number has been reached.
-        <code>msg.complete</code> will send the msg and then clear the accumlation.</li>
     </ul>
     The other properties of the output message are taken from the last message received before the result is sent.</p>
     <p>A <i>count</i> can be set for how many messages should be received before generating the output message</p>
@@ -164,7 +169,8 @@
             propertyType: { value:"msg"},
             key: {value:"topic"},
             joiner: { value:"\\n"},
-            topic: { value:""},
+            accumulate: { value:"false" },
+            //topic: { value:""},
             timeout: {value:""},
             count: {value:""}
         },
@@ -196,10 +202,6 @@
                 }
                 // if (val === "accum") { $("#trigger-row").hide(); }
                 // else { $("#trigger-row").show(); }
-            });
-
-            $("#node-input-key").change(function(e) {
-                $("#node-newtopic").text($("#node-input-key").val());
             });
 
             $("#node-input-property").typedInput({
