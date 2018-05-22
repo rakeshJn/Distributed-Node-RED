@@ -1003,6 +1003,8 @@ RED.sidebar.versionControl = (function() {
             name: "Project History",
             content: sidebarContent,
             enableOnEdit: false,
+            fixed: true,
+            iconClass: "fa fa-code-fork",
             onchange: function() {
                 setTimeout(function() {
                     sections.resize();

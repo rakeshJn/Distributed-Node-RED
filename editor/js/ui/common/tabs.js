@@ -50,6 +50,45 @@ RED.tabs = (function() {
             scrollRight = $('<div class="red-ui-tab-button red-ui-tab-scroll red-ui-tab-scroll-right"><a href="#" style="display:none;"><i class="fa fa-caret-right"></i></a></div>').appendTo(wrapper).find("a");
             scrollRight.on('mousedown',function(evt) { scrollEventHandler(evt,'+=150') }).on('click',function(evt){ evt.preventDefault();});
         }
+
+        if (options.collapsible) {
+            // var dropDown = $('<div>',{class:"red-ui-tabs-select"}).appendTo(wrapper);
+            // ul.hide();
+            wrapper.addClass("red-ui-tabs-collapsible");
+
+            var collapsedButtonsRow = $('<div class="red-ui-tab-fixed-buttons"></div>').appendTo(wrapper);
+
+            var selectButton = $('<a href="#"><i class="fa fa-caret-down"></i></a>').appendTo(collapsedButtonsRow);
+            selectButton.click(function(evt) {
+                evt.preventDefault();
+                var options = [];
+                ul.children().each(function(i,el) {
+                    var id = $(el).data('tabId');
+                    options.push({
+                        id:"red-ui-tabs-menu-option-"+id,
+                        label: tabs[id].name,
+                        onselect: function() {
+                            activateTab(id);
+                        }
+                    });
+                })
+                var tabMenu = RED.menu.init({id:"debug-message-option-menu",options: options});
+                tabMenu.css({
+                    position: "absolute"
+                })
+                tabMenu.on('mouseleave', function(){ $(this).hide() });
+                tabMenu.on('mouseup', function() { $(this).hide() });
+                tabMenu.appendTo("body");
+                var elementPos = selectButton.offset();
+                tabMenu.css({
+                    top: (elementPos.top+selectButton.height() - 20)+"px",
+                    left: (elementPos.left - tabMenu.width() + 20)+"px"
+                })
+                tabMenu.show();
+            })
+
+        }
+
         function scrollEventHandler(evt,dir) {
             evt.preventDefault();
             if ($(this).hasClass('disabled')) {
@@ -155,41 +194,53 @@ RED.tabs = (function() {
             var tabs = ul.find("li.red-ui-tab");
             var width = wrapper.width();
             var tabCount = tabs.size();
-            var tabWidth = (width-12-(tabCount*6))/tabCount;
-            currentTabWidth = (100*tabWidth/width)+"%";
-            currentActiveTabWidth = currentTabWidth+"%";
-            if (options.scrollable) {
-                tabWidth = Math.max(tabWidth,140);
-                currentTabWidth = tabWidth+"px";
-                currentActiveTabWidth = 0;
-                var listWidth = Math.max(wrapper.width(),12+(tabWidth+6)*tabCount);
-                ul.width(listWidth);
-                updateScroll();
-            } else if (options.hasOwnProperty("minimumActiveTabWidth")) {
-                if (tabWidth < options.minimumActiveTabWidth) {
-                    tabCount -= 1;
-                    tabWidth = (width-12-options.minimumActiveTabWidth-(tabCount*6))/tabCount;
-                    currentTabWidth = (100*tabWidth/width)+"%";
-                    currentActiveTabWidth = options.minimumActiveTabWidth+"px";
-                } else {
-                    currentActiveTabWidth = 0;
-                }
-            }
-            tabs.css({width:currentTabWidth});
-            if (tabWidth < 50) {
-                ul.find(".red-ui-tab-close").hide();
-                ul.find(".red-ui-tab-icon").hide();
-                ul.find(".red-ui-tab-label").css({paddingLeft:Math.min(12,Math.max(0,tabWidth-38))+"px"})
+            var tabWidth;
+
+            if (options.collapsible) {
+                width = width - collapsedButtonsRow.width()-10;
+                tabs.css({width:width});
+
             } else {
-                ul.find(".red-ui-tab-close").show();
-                ul.find(".red-ui-tab-icon").show();
-                ul.find(".red-ui-tab-label").css({paddingLeft:""})
-            }
-            if (currentActiveTabWidth !== 0) {
-                ul.find("li.red-ui-tab.active").css({"width":options.minimumActiveTabWidth});
-                ul.find("li.red-ui-tab.active .red-ui-tab-close").show();
-                ul.find("li.red-ui-tab.active .red-ui-tab-icon").show();
-                ul.find("li.red-ui-tab.active .red-ui-tab-label").css({paddingLeft:""})
+                var tabWidth = (width-12-(tabCount*6))/tabCount;
+                currentTabWidth = (100*tabWidth/width)+"%";
+                currentActiveTabWidth = currentTabWidth+"%";
+                if (options.scrollable) {
+                    tabWidth = Math.max(tabWidth,140);
+                    currentTabWidth = tabWidth+"px";
+                    currentActiveTabWidth = 0;
+                    var listWidth = Math.max(wrapper.width(),12+(tabWidth+6)*tabCount);
+                    ul.width(listWidth);
+                    updateScroll();
+                } else if (options.hasOwnProperty("minimumActiveTabWidth")) {
+                    if (tabWidth < options.minimumActiveTabWidth) {
+                        tabCount -= 1;
+                        tabWidth = (width-12-options.minimumActiveTabWidth-(tabCount*6))/tabCount;
+                        currentTabWidth = (100*tabWidth/width)+"%";
+                        currentActiveTabWidth = options.minimumActiveTabWidth+"px";
+                    } else {
+                        currentActiveTabWidth = 0;
+                    }
+                }
+                if (options.collapsible) {
+                    console.log(currentTabWidth);
+                }
+
+                tabs.css({width:currentTabWidth});
+                if (tabWidth < 50) {
+                    ul.find(".red-ui-tab-close").hide();
+                    ul.find(".red-ui-tab-icon").hide();
+                    ul.find(".red-ui-tab-label").css({paddingLeft:Math.min(12,Math.max(0,tabWidth-38))+"px"})
+                } else {
+                    ul.find(".red-ui-tab-close").show();
+                    ul.find(".red-ui-tab-icon").show();
+                    ul.find(".red-ui-tab-label").css({paddingLeft:""})
+                }
+                if (currentActiveTabWidth !== 0) {
+                    ul.find("li.red-ui-tab.active").css({"width":options.minimumActiveTabWidth});
+                    ul.find("li.red-ui-tab.active .red-ui-tab-close").show();
+                    ul.find("li.red-ui-tab.active .red-ui-tab-icon").show();
+                    ul.find("li.red-ui-tab.active .red-ui-tab-label").css({paddingLeft:""})
+                }
             }
 
         }
@@ -223,13 +274,31 @@ RED.tabs = (function() {
                 var li = $("<li/>",{class:"red-ui-tab"}).appendTo(ul);
                 li.attr('id',"red-ui-tab-"+(tab.id.replace(".","-")));
                 li.data("tabId",tab.id);
+
+                if (options.maximumTabWidth) {
+                    li.css("maxWidth",options.maximumTabWidth+"px");
+                }
                 var link = $("<a/>",{href:"#"+tab.id, class:"red-ui-tab-label"}).appendTo(li);
                 if (tab.icon) {
                     $('<img src="'+tab.icon+'" class="red-ui-tab-icon"/>').appendTo(link);
+                } else if (tab.iconClass) {
+                    $('<i>',{class:"red-ui-tab-icon "+tab.iconClass}).appendTo(link);
                 }
                 var span = $('<span/>',{class:"bidiAware"}).text(tab.label).appendTo(link);
                 span.attr('dir', RED.text.bidi.resolveBaseTextDir(tab.label));
-
+                if (tab.fixed) {
+                    li.addClass("red-ui-tab-fixed");
+                    // var fixedLink = $('<a href="#'+tab.id+'"></a>').insertBefore(collapsedButtonsRow.find("a:last"));
+                    // if (tab.iconClass) {
+                    //     $('<i>',{class:tab.iconClass}).appendTo(fixedLink);
+                    // } else {
+                    //     $('<i>',{class:"fa fa-lemon-o"}).appendTo(fixedLink);
+                    // }
+                    // fixedLink.click(function(evt) {
+                    //     evt.preventDefault();
+                    //     activateTab(tab.id);
+                    // });
+                }
                 link.on("click",onTabClick);
                 link.on("dblclick",onTabDblClick);
                 if (tab.closeable) {
