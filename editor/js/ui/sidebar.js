@@ -35,7 +35,8 @@ RED.sidebar = (function() {
                 tab.onremove.call(tab);
             }
         },
-        minimumActiveTabWidth: 70
+        // minimumActiveTabWidth: 70,
+        collapsible: true
         // scrollable: true
     });
 
@@ -81,6 +82,8 @@ RED.sidebar = (function() {
             },
             group: "sidebar-tabs"
         });
+
+        options.iconClass = options.iconClass || "fa fa-square-o"
 
         knownTabs[options.id] = options;
 
