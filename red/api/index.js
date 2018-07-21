@@ -23,6 +23,7 @@ var cors = require('cors');
 
 var auth = require("./auth");
 var apiUtil = require("./util");
+var dist = require("./dist");
 
 var adminApp;
 var server;
@@ -37,6 +38,7 @@ function init(_server,_runtime) {
         apiUtil.init(runtime);
         adminApp = express();
         auth.init(runtime);
+        dist.init(runtime);
 
         var maxApiRequestSize = settings.apiMaxLength || '5mb';
         adminApp.use(bodyParser.json({limit:maxApiRequestSize}));

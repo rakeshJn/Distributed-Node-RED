@@ -21,6 +21,7 @@ var flows = require("./flows");
 var flow = require("./flow");
 var context = require("./context");
 var auth = require("../auth");
+var dist = require("../dist");
 
 var apiUtil = require("../util");
 
@@ -44,6 +45,7 @@ module.exports = {
         adminApp.post("/flow",needsPermission("flows.write"),flow.post,apiUtil.errorHandler);
         adminApp.delete("/flow/:id",needsPermission("flows.write"),flow.delete,apiUtil.errorHandler);
         adminApp.put("/flow/:id",needsPermission("flows.write"),flow.put,apiUtil.errorHandler);
+        adminApp.post("/dist",needsPermission("flows.write"),dist.post,errorHandler);
 
         // Nodes
         adminApp.get("/nodes",needsPermission("nodes.read"),nodes.getAll,apiUtil.errorHandler);
