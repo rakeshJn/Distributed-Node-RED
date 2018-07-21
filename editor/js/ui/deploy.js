@@ -370,7 +370,7 @@ RED.deploy = (function() {
             if(deploymentType == 'dist')
             {
                 gotourl = "http://www.google.com";
-                gotourl = "http://9.1.143.215:8080/Red-node-RED/REDnodeRED";   //temporary
+                gotourl = "dist";  
             }
 
             deployInflight = true;
