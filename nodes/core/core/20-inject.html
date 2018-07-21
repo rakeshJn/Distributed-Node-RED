@@ -15,6 +15,11 @@
 -->
 
 <script type="text/x-red" data-template-name="inject">
+   <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-tag"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
+
     <div class="form-row">
         <label for="node-input-payload"><i class="fa fa-envelope"></i> <span data-i18n="common.label.payload"></span></label>
         <input type="text" id="node-input-payload" style="width:70%">
@@ -183,6 +188,7 @@ If you want every 20 minutes from now - use the <i>"interval"</i> option.</p>
         category: 'input',
         color:"#a6bbcf",
         defaults: {
+            location: {value:"", type:"location"},
             name: {value:""},
             topic: {value:""},
             payload: {value:"", validate: RED.validators.typedInput("payloadType")},
