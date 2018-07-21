@@ -19,7 +19,8 @@ RED.deploy = (function() {
     var deploymentTypes = {
         "full":{img:"red/images/deploy-full-o.png"},
         "nodes":{img:"red/images/deploy-nodes-o.png"},
-        "flows":{img:"red/images/deploy-flows-o.png"}
+        "flows":{img:"red/images/deploy-flows-o.png"},
+        "dist":{img:"red/images/deploy-flows-o.png"}
     }
 
     var ignoreDeployWarnings = {
@@ -67,7 +68,8 @@ RED.deploy = (function() {
                   options: [
                       {id:"deploymenu-item-full",toggle:"deploy-type",icon:"red/images/deploy-full.png",label:RED._("deploy.full"),sublabel:RED._("deploy.fullDesc"),selected: true, onselect:function(s) { if(s){changeDeploymentType("full")}}},
                       {id:"deploymenu-item-flow",toggle:"deploy-type",icon:"red/images/deploy-flows.png",label:RED._("deploy.modifiedFlows"),sublabel:RED._("deploy.modifiedFlowsDesc"), onselect:function(s) {if(s){changeDeploymentType("flows")}}},
-                      {id:"deploymenu-item-node",toggle:"deploy-type",icon:"red/images/deploy-nodes.png",label:RED._("deploy.modifiedNodes"),sublabel:RED._("deploy.modifiedNodesDesc"),onselect:function(s) { if(s){changeDeploymentType("nodes")}}}
+                      {id:"deploymenu-item-node",toggle:"deploy-type",icon:"red/images/deploy-nodes.png",label:RED._("deploy.modifiedNodes"),sublabel:RED._("deploy.modifiedNodesDesc"),onselect:function(s) { if(s){changeDeploymentType("nodes")}}},
+                      {id:"deploymenu-item-dist",toggle:"deploy-type",icon:"red/images/deploy-nodes.png",label:RED._("deploy.modifiedDist"),sublabel:RED._("deploy.modifiedDistDesc"), onselect:function(s) {if(s){changeDeploymentType("dist")}}}
                   ]
               });
         } else if (type == "simple") {
@@ -364,6 +366,12 @@ RED.deploy = (function() {
             if (!force) {
                 data.rev = RED.nodes.version();
             }
+            var gotourl = "flows";           //Rakesh
+            if(deploymentType == 'dist')
+            {
+                gotourl = "http://www.google.com";
+                gotourl = "http://9.1.143.215:8080/Red-node-RED/REDnodeRED";   //temporary
+            }
 
             deployInflight = true;
             $("#header-shade").show();
@@ -371,7 +379,7 @@ RED.deploy = (function() {
             $("#palette-shade").show();
             $("#sidebar-shade").show();
             $.ajax({
-                url:"flows",
+                url: gotourl,
                 type: "POST",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
