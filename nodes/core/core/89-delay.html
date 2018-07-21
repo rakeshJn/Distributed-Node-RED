@@ -16,6 +16,10 @@
 
 <script type="text/x-red" data-template-name="delay">
     <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-tag"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
+    <div class="form-row">
         <label for="node-input-delay-action"><i class="fa fa-tasks"></i> <span data-i18n="delay.action"></span></label>
         <select id="node-input-delay-action" style="width:270px !important">
             <option value="delay" data-i18n="delay.delaymsg"></option>
@@ -127,6 +131,7 @@
         category: 'function',
         color:"#E6E0F8",
         defaults: {
+            location: {value:"", type:"location"},
             name: {value:""},
             pauseType: {value:"delay", required:true},
             timeout: {value:"5", required:true, validate:function(v) { return RED.validators.number(v) && (v >= 0); }},

@@ -1,5 +1,9 @@
 
 <script type="text/x-red" data-template-name="function">
+   <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-tag"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name">
@@ -66,6 +70,7 @@
         color:"#fdd0a2",
         category: 'function',
         defaults: {
+            location: {value:"", type:"location"},
             name: {value:""},
             func: {value:"\nreturn msg;"},
             outputs: {value:1},

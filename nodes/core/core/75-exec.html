@@ -16,6 +16,10 @@
 
 <script type="text/x-red" data-template-name="exec">
     <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-tag"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
+    <div class="form-row">
         <label for="node-input-command"><i class="fa fa-file"></i> <span data-i18n="exec.label.command"></span></label>
         <input type="text" id="node-input-command" data-i18n="[placeholder]exec.label.command">
     </div>
@@ -124,6 +128,7 @@
         category: 'advanced-function',
         color:"darksalmon",
         defaults: {
+            location: {value:"", type:"location"},
             command: {value:""},
             addpay: {value:true},
             append: {value:""},

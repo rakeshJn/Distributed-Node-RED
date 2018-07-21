@@ -1,6 +1,10 @@
 
 <script type="text/x-red" data-template-name="template">
     <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-tag"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name">
     </div>
@@ -87,6 +91,7 @@
         color:"rgb(243, 181, 103)",
         category: 'function',
         defaults: {
+            location: {value:"", type:"location"},
             name: {value:""},
             field: {value:"payload", validate:RED.validators.typedInput("fieldType")},
             fieldType: {value:"msg"},

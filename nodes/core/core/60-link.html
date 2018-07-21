@@ -1,5 +1,10 @@
 
 <script type="text/x-red" data-template-name="link in">
+
+   <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-tag"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Location">
+    </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]common.label.name">
@@ -261,6 +266,7 @@
         category: 'input',
         color:"#ddd",//"#87D8CF",
         defaults: {
+            location: {value:"", type:"location"},
             name: {value:""},
             links: { value: [] }
         },
