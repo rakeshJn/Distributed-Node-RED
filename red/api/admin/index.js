@@ -45,7 +45,7 @@ module.exports = {
         adminApp.post("/flow",needsPermission("flows.write"),flow.post,apiUtil.errorHandler);
         adminApp.delete("/flow/:id",needsPermission("flows.write"),flow.delete,apiUtil.errorHandler);
         adminApp.put("/flow/:id",needsPermission("flows.write"),flow.put,apiUtil.errorHandler);
-        adminApp.post("/dist",needsPermission("flows.write"),dist.post,errorHandler);
+        adminApp.post("/dist",needsPermission("flows.write"),dist.post,apiUtil.errorHandler);
 
         // Nodes
         adminApp.get("/nodes",needsPermission("nodes.read"),nodes.getAll,apiUtil.errorHandler);
